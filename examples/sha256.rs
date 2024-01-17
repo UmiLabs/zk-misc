@@ -1,4 +1,4 @@
-use ark_bn254::{Bn254 as Curve, Fr};
+use ark_bn254::Bn254 as Curve;
 use ark_crypto_primitives::crh::sha256::constraints::{DigestVar, Sha256Gadget};
 use ark_ff::{PrimeField, ToConstraintField};
 use ark_groth16::Groth16;
@@ -85,4 +85,5 @@ fn main() {
         start.elapsed().as_millis()
     );
     assert!(res);
+    println!("Proof verified: {}", res);
 }

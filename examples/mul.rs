@@ -74,4 +74,5 @@ fn main() {
     let proof = GrothSetup::prove(&pk, circuit, &mut rng).unwrap();
     let res = GrothSetup::verify(&vk, &expected.to_field_elements().unwrap(), &proof).unwrap();
     assert!(res);
+    println!("Proof verified: {}", res);
 }

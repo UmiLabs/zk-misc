@@ -1,6 +1,19 @@
 install-circom:
     cargo install --git https://github.com/iden3/circom.git
 
+run-examples:
+    cargo run -r --example mul
+    cargo run -r --example sha256
+
+    @just build-circom mul
+    cargo run -r --example circom
+
+    @just e2e mul
+
+e2e ARG="mul":
+    cargo run -r -- --wasm output/{{ARG}}_js/{{ARG}}.wasm --r1cs output/{{ARG}}.r1cs --inputs circuits/{{ARG}}-inputs.json
+
+
 build-circom ARG="entry":
     circom circuits/{{ARG}}.circom --r1cs --wasm --sym -o output
 
