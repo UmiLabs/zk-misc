@@ -7,7 +7,9 @@ use clap::Parser;
 use serde_json::Value;
 use std::fs;
 
-#[derive(Parser, Debug)] // requires `derive` feature
+/// Usage:
+///     uzi --wasm output/mul_js/mul.wasm --r1cs output/mul.r1cs --inputs circuits/mul-inputs.json
+#[derive(Parser, Debug)]
 struct Args {
     /// Witness file
     #[clap(long = "wasm")]
@@ -70,7 +72,6 @@ fn routine(witness_file: &str, constrains_file: &str, inputs: &[(String, i64)]) 
     let circuit = builder.build().unwrap();
 
     let public_inputs = circuit.get_public_inputs().unwrap();
-    dbg!(&public_inputs);
 
     let proof = GrothSetup::prove(&pk, circuit, &mut rng).unwrap();
     let res = GrothSetup::verify(&pk.vk, &public_inputs, &proof).unwrap();
