@@ -70,6 +70,8 @@ fn routine(witness_file: &str, constrains_file: &str, inputs: &[(String, i64)]) 
     let circuit = builder.build().unwrap();
 
     let public_inputs = circuit.get_public_inputs().unwrap();
+    dbg!(&public_inputs);
+
     let proof = GrothSetup::prove(&pk, circuit, &mut rng).unwrap();
     let res = GrothSetup::verify(&pk.vk, &public_inputs, &proof).unwrap();
     assert!(res);
