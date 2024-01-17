@@ -1,0 +1,40 @@
+[package]
+edition = "2021"
+name = "umi-zk-uitls"
+version = "0.1.0"
+
+[lib]
+name = "ark_utils"
+path = "src/lib/mod.rs"
+
+[dependencies]
+anyhow = "1.0.75"
+ark-bls12-381 = "0.4.0"
+ark-bn254 = "0.4.0"
+ark-circom = {git = "https://github.com/gakonst/ark-circom.git"}
+ark-crypto-primitives = {version = "0.4.0", features = ["snark", "crh", "r1cs", "prf"]}
+ark-ec = {version = "0.4.1", features = ["parallel"]}
+ark-ff = {version = "0.4.1", features = ["asm", "parallel"]}
+ark-groth16 = "0.4.0"
+ark-r1cs-std = "0.4.0"
+ark-relations = "0.4.0"
+ark-serialize = "0.4.1"
+ark-snark = "0.4.0"
+ark-std = "0.4.0"
+fastcrypto = "0.1.7"
+fastcrypto-zkp = {git = "https://github.com/MystenLabs/fastcrypto", rev = "fastcrypto-v0.1.7"}
+hex = "0.4.3"
+num-bigint = {version = "0.4", default-features = false, features = ["rand"]}
+num-traits = "0.2.15"
+rand = "0.8.5"
+serde = {version = "1.0.183", features = ["derive"]}
+serde_json = "1.0.104"
+serde_with = { version = "3.4.0", features = ["hex"] }
+
+[features]
+parallel = [
+  "ark-ff/parallel",
+  "ark-std/parallel",
+  "ark-ec/parallel",
+  "ark-crypto-primitives/parallel",
+]
