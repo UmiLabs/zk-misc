@@ -3916,8 +3916,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "umi-zk-uitls"
-version = "0.1.0"
+name = "umi-zk-interface"
+version = "0.202401.1"
 dependencies = [
  "anyhow",
  "ark-bls12-381",

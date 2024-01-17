@@ -1,7 +1,7 @@
 [package]
 edition = "2021"
-name = "umi-zk-uitls"
-version = "0.1.0"
+name = "umi-zk-interface"
+version = "0.202401.1"
 
 [lib]
 name = "ark_utils"
@@ -9,7 +9,7 @@ path = "src/lib/mod.rs"
 
 [[bin]]
 name = "uzi"
-path = "src/bin/circom.rs"
+path = "src/bin/uzi.rs"
 
 [dependencies]
 anyhow = "1.0.75"
