@@ -1,11 +1,11 @@
 pub use ark_bn254::{Bn254 as Curve, Fr};
 use ark_circom::{CircomBuilder, CircomConfig};
 use ark_crypto_primitives::snark::SNARK;
-use ark_groth16::Groth16;
+use ark_groth16::{verifier, Groth16};
 use ark_std::rand::thread_rng;
-use ark_utils::serdes::PublicInputs;
+use ark_utils::{groth16::Groth16Verifier, serdes::PublicInputs};
 use clap::Parser;
-use serde_json::Value;
+use serde_json::{json, Value};
 use std::fs;
 
 /// Usage:
@@ -23,6 +23,10 @@ struct Args {
     /// Inputs JSON file
     #[clap(long = "inputs")]
     inputs: std::path::PathBuf,
+
+    /// Output JSON file
+    #[clap(short = 'o', default_value = "output.json")]
+    output: std::path::PathBuf,
 }
 
 fn main() -> anyhow::Result<()> {
@@ -34,6 +38,7 @@ fn main() -> anyhow::Result<()> {
         &args.wasm_file.display().to_string(),
         &args.r1cs_file.display().to_string(),
         &inputs,
+        &args,
     );
 
     Ok(())
@@ -57,7 +62,7 @@ fn read_json_inputs(
     Ok(inputs)
 }
 
-fn routine(witness_file: &str, constrains_file: &str, inputs: &[(String, i64)]) {
+fn routine(witness_file: &str, constrains_file: &str, inputs: &[(String, i64)], args: &Args) {
     type GrothSetup = Groth16<Curve>;
     let mut rng = thread_rng();
 
@@ -83,7 +88,7 @@ fn routine(witness_file: &str, constrains_file: &str, inputs: &[(String, i64)]) 
         let public_inputs = PublicInputs::new(public_inputs);
 
         let start = ark_std::time::Instant::now();
-        let vk = fastcrypto_zkp::bn254::VerifyingKey::from(pk.vk);
+        let vk = fastcrypto_zkp::bn254::VerifyingKey::from(pk.vk.clone());
         let pvk = fastcrypto_zkp::bn254::verifier::process_vk_special(&vk);
         let public_inputs_bytes = public_inputs.to_bytes();
 
@@ -93,6 +98,16 @@ fn routine(witness_file: &str, constrains_file: &str, inputs: &[(String, i64)]) 
             &ark_utils::serdes::to_bytes(&proof),
         )
         .expect("failed to verify");
+
+        let verifier = Groth16Verifier::new(
+            &ark_utils::serdes::to_bytes(&pk.vk),
+            &public_inputs_bytes.clone(),
+            &ark_utils::serdes::to_bytes(&proof),
+        );
+        verifier.print_info();
+        verifier.dump_json(args.output.as_path());
+        verifier.verify();
+
         assert!(result);
         println!("verifying time: {} ms", start.elapsed().as_millis());
     }
